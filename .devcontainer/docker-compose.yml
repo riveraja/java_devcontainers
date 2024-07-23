@@ -1,0 +1,40 @@
+services:
+  app:
+    container_name: app
+    image: mcr.microsoft.com/devcontainers/java:2.0.9-8-jdk-bullseye
+    restart: on-failure
+    command: ["sleep", "infinity"]
+    volumes:
+      - ../:/workspace:cached
+    networks:
+      - java-app-test
+  
+  proxysql1:
+    container_name: proxysql1
+    image: proxysql/proxysql:2.4.8
+    restart: always
+    volumes:
+      - ./proxysql.cnf:/etc/proxysql.cnf
+      - proxysql:/var/lib/proxysql
+    networks:
+      - java-app-test
+  
+  mysql1:
+    container_name: mysql1
+    image: mysql:8.0.30
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=t00r
+      - MYSQL_USER=monit
+      - MYSQL_PASSWORD=monit0r
+    networks:
+      - java-app-test
+
+volumes:
+  mysql:
+  proxysql:
+
+networks:
+  java-app-test:
